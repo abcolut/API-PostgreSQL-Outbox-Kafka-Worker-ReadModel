@@ -1,0 +1,9 @@
+.env
+tmp/
+*.docx
+__*.txt
+go.mod
+go.sum
+*.exe
+*.log
+worker.exe
