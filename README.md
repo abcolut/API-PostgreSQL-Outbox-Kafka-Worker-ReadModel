@@ -26,8 +26,9 @@ Soft delete	            orders_read.deleted	                        Не тер�
 Prometheus — получили обратную связь о том, что происходит внутри.
 
 
-# схема работы
+# Схема работы
 
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                              CLIENT (Bruno, curl)                           │
 └───────────────────────────────┬─────────────────────────────────────────────┘
@@ -100,10 +101,11 @@ Prometheus — получили обратную связь о том, что п
 │  При ошибке: DLQProducer.Send() ─────────────┘                           │
 └──────────────────────────────────────────────────────────────────────────┘
 
+
 ## Поток данных по операциям
 ### POST /orders (создание заказа)
 
-
+```text
 Client ──► Handler ──► OrderService.Create()
                               │
                               ▼
@@ -135,10 +137,12 @@ Client ──► Handler ──► OrderService.Create()
     │  WORKER: ReadMessage → insertEventTx → Upsert orders_read│
     └─────────────────────────────────────────────────────────┘
 
+
 HTTP-ответ возвращается до того, как событие уйдёт в Kafka. Гарантия — в outbox: если relay упадёт, событие останется в outbox со status='pending' и будет опубликовано при следующем цикле.
 
 ###  GET /orders/{id} (чтение заказа)
 
+```text
 Client ──► Handler ──► OrderService.GetByID()
                               │
                               ▼
@@ -165,8 +169,8 @@ Client ──► Handler ──► OrderService.GetByID()
 
 Ключевое: GET никогда не обращается к orders (WRITE model). Только к кэшу и orders_read. Это и есть разделение CQRS.
 ### PATCH /orders/{id} (обновление)
-text
 
+```text
 Client ──► Handler ──► OrderService.Update()
                               │
                               ▼
@@ -191,8 +195,9 @@ Client ──► Handler ──► OrderService.Update()
                      Kafka → Worker → UPSERT orders_read
 
 ### DELETE /orders/{id}
-text
 
+
+```text
 Client ──► Handler ──► OrderService.Delete()
                               │
                               ▼
@@ -262,6 +267,7 @@ Client ──► Handler ──► OrderService.Delete()
     - Создание событий в Kafka 
     - Создание worker Kafka - сервис который обрабатывает заказ (например, посылает письмо клиенту)
 
+```text
     ┌─────────────────────────────────────────┐
     │  Windows / VS Code                      │
     │                                         │
