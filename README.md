@@ -2,7 +2,9 @@
 
 Учебный проект: HTTP API - PostgreSQL - Outbox - Kafka - Worker - Read-model (CQRS).
 
-GO - приема заказов (PostGree + Redis) # Формирования таблицы Order для чтения (модель CQRS); отправка сообщений в Кафка # Go процесс взаимодействия с Кафка и реализация модели DLQ и At-least-once delivery. 
+GO процесс приема заказов (PostGree + Redis) 
+Go процесс формирования таблицы Order для чтения (модель CQRS); отправка сообщений в Кафка 
+Go процесс взаимодействия с Кафка и реализация модели DLQ и At-least-once delivery. 
 
 
 ## Стек
@@ -236,7 +238,7 @@ Client ──► Handler ──► OrderService.Delete()
    Get-Content .\migrations\*.sql | docker exec -i postgres psql -U user -d appdb
 
 3. Запустить сервисы (в трёх терминалах):
-   go run ./cmd/app
+   go run ./cmd/app или air 
    go run ./cmd/relay
    go run ./cmd/worker
 

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -47,9 +48,10 @@ func (h *OrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 // ---------- GET /orders/{id} ----------
 
 func (h *OrderHandler) GetByID(w http.ResponseWriter, r *http.Request) {
-	id, err := parseIDFromPath(r.URL.Path, "/orders/")
+	fmt.Print(r.URL.Path)
+	id, err := parseIDFromPath(r.URL.Path, "/api/orders/")
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "invalid id")
+		writeError(w, http.StatusBadRequest, "invalid id!!!!")
 		return
 	}
 
@@ -118,7 +120,7 @@ func (h *OrderHandler) List(w http.ResponseWriter, r *http.Request) {
 // ---------- PATCH /orders/{id} ----------
 
 func (h *OrderHandler) Update(w http.ResponseWriter, r *http.Request) {
-	id, err := parseIDFromPath(r.URL.Path, "/orders/")
+	id, err := parseIDFromPath(r.URL.Path, "/api/orders/")
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "invalid id")
 		return
@@ -163,7 +165,7 @@ func (h *OrderHandler) Update(w http.ResponseWriter, r *http.Request) {
 // ---------- DELETE /orders/{id} ----------
 
 func (h *OrderHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	id, err := parseIDFromPath(r.URL.Path, "/orders/")
+	id, err := parseIDFromPath(r.URL.Path, "/api/orders/")
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "invalid id")
 		return

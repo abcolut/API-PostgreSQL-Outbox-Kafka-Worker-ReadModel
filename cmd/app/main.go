@@ -17,6 +17,7 @@ import (
 	"my-go-service/internal/cache"
 	"my-go-service/internal/config"
 	"my-go-service/internal/events"
+	"my-go-service/internal/handlers"
 	"my-go-service/internal/repository/postgres"
 	"my-go-service/internal/service"
 	httptransport "my-go-service/internal/transport/http"
@@ -72,17 +73,17 @@ func main() {
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
 	})
-	mux.HandleFunc("/orders", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/orders", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			orderHandler.List(w, r)
 		case http.MethodPost:
 			orderHandler.Create(w, r)
 		default:
-			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			http.Error(w, "method not allowed for /api/orders", http.StatusMethodNotAllowed)
 		}
 	})
-	mux.HandleFunc("/orders/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/orders/", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			orderHandler.GetByID(w, r)
@@ -91,9 +92,14 @@ func main() {
 		case http.MethodDelete:
 			orderHandler.Delete(w, r)
 		default:
-			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			http.Error(w, "method not allowed for /api/orders/", http.StatusMethodNotAllowed)
 		}
 	})
+	mux.HandleFunc("/order_list", handlers.OrdersListHandler)
+	mux.HandleFunc("/order_new", handlers.OrderNewHandler)
+	mux.HandleFunc("/order_change", handlers.OrderChangeHandler)
+	http.HandleFunc("/favicon.ico", handlers.FaviconHandler)
+	mux.HandleFunc("/", handlers.IndexHandler)
 
 	srv := &http.Server{Addr: ":8080", Handler: mux}
 	go func() {

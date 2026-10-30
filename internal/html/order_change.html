@@ -1,0 +1,143 @@
+<h3 align="center">Изменить заказ <span id="id"></span></h3>
+
+
+<div id="id_section">
+    <div class="row" id="db_id">
+        <label for="id">id:</label> <input name="id" placeholder="id" value=1 type="number">
+        <button onclick="getItemInfo()">Получить Данные </button>
+    </div>
+</div>
+<div id="change_section">
+
+
+
+    <div class="row" id="db_user_id">
+        <label>user_id:</label>
+        <input name="user_id" placeholder="1" value="3" type="number" disabled="true">
+    </div>
+
+    <!-- <div class="row" id="db_user_id">
+        <label>Покупатель:</label> <input name="customer" placeholder="customer" value="Customer">
+    </div> -->
+    <div class="row" id="db_item">
+        <label>Товар:</label> <input name="item" placeholder="item" value="item">
+    </div>
+    <div class="row" id="db_quantity">
+        <label>Количество:</label> <input name="quantity" placeholder="quantity" value=4 type="number">
+    </div>
+    <div class="row" id="db_status">
+        <label>Статус:</label> <input name="status" placeholder="status" value="new">
+    </div>
+
+    <div class="row"><button onclick="orderAction()">Изменить заказ</button></div>
+</div>
+
+
+<div id="responceStatus" class="row center"></div>
+<div id="answerDb" class="row center goodAnswer"></div>
+<div id="errorDb" class="row center errorAnswer"></div>
+
+
+
+<script>
+    var divResponceStatus
+    var divDbStatus
+    var divDbId
+    var divDbCustomer
+    var divDbItem
+    var divDbQuantity
+    // let divToken
+
+    var token
+    var flag_get_info = false
+    var id
+
+    function getItemInfo() {
+        document.getElementById("id_section").style.display = 'none'
+        document.getElementById("change_section").style.display = 'block'
+
+        id = Number(document.querySelector('input[name="id"]').value)
+        document.getElementById("id").innerHTML = id
+
+
+        fetch('/api/orders/' + id, {})
+            .then((res) => {
+                console.log(res)
+                if (divResponceStatus) { divResponceStatus.innerHTML = res.status }
+                return res.json();
+            })
+            .then((data) => {
+                if (divAnswerDb && data) { divAnswerDb.innerHTML = JSON.stringify(data) }
+                // if (divErrorDb && data.error) { divErrorDb.innerHTML = JSON.stringify(data.error) }
+                // document.querySelector('input[name="user_id"]').value = data.user_id
+                document.querySelector('input[name="user_id"]').value = data.user_id
+                document.querySelector('input[name="item"]').value = data.item
+                document.querySelector('input[name="quantity"]').value = data.quantity
+                document.querySelector('input[name="status"]').value = data.status
+
+            })
+            .catch((err) => {
+                console.error('Запрос не выполнен:', err);
+                if (divAnswerDb) { divAnswerDb.innerHTML = "<span class='error'>" + err + "</span>" }
+            });
+    }
+
+    function orderAction() {
+        if (divAnswerDb) { divAnswerDb.innerHTML = "" }
+        if (divErrorDb) { divErrorDb.innerHTML = "" }
+
+
+        document.getElementById("id_section").style.display = 'block'
+        document.getElementById("change_section").style.display = 'none'
+
+        const formData = {
+            user_id: Number(document.querySelector('input[name="user_id"]').value),
+            item: document.querySelector('input[name="item"]').value,
+            quantity: Number(document.querySelector('input[name="quantity"]').value),
+            status: document.querySelector('input[name="status"]').value,
+        };
+        console.log(formData)
+
+        fetch('/api/orders/' + id, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', },
+            // headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(formData),
+        })
+            .then((res) => {
+                if (divResponceStatus) { divResponceStatus.innerHTML = res.status }
+                return res.json();
+            })
+            .then((data) => {
+                if (divAnswerDb && data) { divAnswerDb.innerHTML = JSON.stringify(data) }
+                // if (divErrorDb && data.error) { divErrorDb.innerHTML = JSON.stringify(data.error) }
+            })
+            .catch((err) => {
+                console.error('Запрос не выполнен:', err);
+                if (divErrorDb) { divErrorDb.innerHTML = "<span class='error'>" + err + "</span>" }
+            });
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        divResponceStatus = document.getElementById("responceStatus")
+        divAnswerDb = document.getElementById("answerDb")
+        divErrorDb = document.getElementById("errorDb")
+        // divToken = document.getElementById("token")
+
+        // divDbStatus = document.getElementById("dbStatus")
+        // divDbId = document.getElementById("dbId")
+        // divDbCustomer = document.getElementById("dbCustomer")
+        // divDbItem = document.getElementById("dbItem")
+        // divDbQuantity = document.getElementById("dbQuantity")
+
+
+        document.getElementById("id_section").style.display = 'block'
+        document.getElementById("change_section").style.display = 'none'
+
+    });
+
+
+
+</script>

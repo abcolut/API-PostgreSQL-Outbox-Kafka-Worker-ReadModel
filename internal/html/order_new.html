@@ -1,0 +1,101 @@
+<h3 align="center">Новый заказ</h3>
+
+
+<div>
+    <div class="row" id="db_id">
+        <label>id:</label> <input name="id" placeholder="id" value=1 type="number">
+    </div>
+
+    <div class="row" id="db_user_id">
+        <label>user_id:</label> <input name="user_id" placeholder="1" value="3" type="number">
+    </div>
+
+    <div class="row" id="db_user_id">
+        <label>Покупатель:</label> <input name="customer" placeholder="customer" value="Customer">
+    </div>
+    <div class="row" id="db_item">
+        <label>Товар:</label> <input name="item" placeholder="item" value="item">
+    </div>
+    <div class="row" id="db_quantity">
+        <label>Количество:</label> <input name="quantity" placeholder="quantity" value=4 type="number">
+    </div>
+    <div class="row" id="db_status">
+        <label>Статус:</label> <input name="status" placeholder="status" value="new">
+    </div>
+
+</div>
+
+<div class="row"><button onclick="orderAction()">Создать заказ</button></div>
+
+<div id="responceStatus" class="row center"></div>
+<div id="answerDb" class="row center goodAnswer"></div>
+<div id="errorDb" class="row center errorAnswer"></div>
+
+
+
+<script>
+    var divResponceStatus
+    var divDbStatus
+    var divDbId
+    var divDbCustomer
+    var divDbItem
+    var divDbQuantity
+    // let divToken
+
+    var token
+
+
+    function orderAction() {
+        if (divAnswerDb) { divAnswerDb.innerHTML = "" }
+        if (divErrorDb) { divErrorDb.innerHTML = "" }
+
+        const formData = {
+            // id: Number(document.querySelector('input[name="id"]').value),
+            user_id: Number(document.querySelector('input[name="user_id"]').value),
+            customer: document.querySelector('input[name="customer"]').value,
+            item: document.querySelector('input[name="item"]').value,
+            quantity: Number(document.querySelector('input[name="quantity"]').value),
+            status: document.querySelector('input[name="status"]').value,
+            // action: document.getElementById('actionSelect').value,
+        };
+        console.log(formData)
+
+        fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            // headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(formData),
+        })
+            .then((res) => {
+                if (divResponceStatus) { divResponceStatus.innerHTML = res.status }
+                return res.json();
+            })
+            .then((data) => {
+                if (divAnswerDb && data) { divAnswerDb.innerHTML = JSON.stringify(data) }
+                // if (divErrorDb && data.error) { divErrorDb.innerHTML = JSON.stringify(data.error) }
+            })
+            .catch((err) => {
+                console.error('Запрос не выполнен:', err);
+                if (divErrorDb) { divErrorDb.innerHTML = "<span class='error'>" + err + "</span>" }
+            });
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        divResponceStatus = document.getElementById("responceStatus")
+        divAnswerDb = document.getElementById("answerDb")
+        divErrorDb = document.getElementById("errorDb")
+        // divToken = document.getElementById("token")
+
+        divDbStatus = document.getElementById("dbStatus")
+        divDbId = document.getElementById("dbId")
+        divDbCustomer = document.getElementById("dbCustomer")
+        divDbItem = document.getElementById("dbItem")
+        divDbQuantity = document.getElementById("dbQuantity")
+
+    });
+
+
+
+</script>

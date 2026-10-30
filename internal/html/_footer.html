@@ -1,0 +1,78 @@
+<hr>
+<h4 class="row">Footer section </h4>
+<div class="userInfo row">Статус Go relay <span id="relay-info"></span></div>
+<div class="userInfo row">Статус Go worker <span id="worker-info"></span></div>
+
+<div class="row">
+    <div class="row"><a href="/">Работа с таблицей заказов</a> </div>
+</div>
+
+<script>
+    divRelay = document.getElementById("relay-info")
+    fetch('http://localhost:8081/health')
+        .then(res => {
+            if (!res.ok) throw new Error('Network error: ' + res.status);
+            return res.json();
+        })
+        .then(data => {
+            console.log('Relay OK:', data);
+            divRelay.innerHTML = JSON.stringify(data);
+        })
+        .catch(err => {
+            console.error('Запрос не выполнен:', err);
+            divRelay.innerHTML = '<span class="error">' + err.message + '</span>';
+        });
+
+
+    divWorker = document.getElementById("worker-info")
+    fetch('http://localhost:8082/health')
+        .then(res => {
+            if (!res.ok) throw new Error('Network error: ' + res.status);
+            return res.json();
+        })
+        .then(data => {
+            console.log('Worker OK:', data);
+            divWorker.innerHTML = JSON.stringify(data);
+            // progRelay.innerHTML = JSON.stringify(data);
+        })
+        .catch(err => {
+            console.error('Запрос не выполнен:', err);
+            divWorker.innerHTML = '<span class="error"> WORKER IS NOT WORK' + err.message + '</span>';
+        });
+</script>
+
+
+
+<style>
+    input,
+    button {
+        margin: 3px;
+        padding: 3px;
+        border-radius: 5px;
+    }
+
+    .row {
+        margin: 10px;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    .error {
+        color: brown;
+    }
+
+    .goodAnswer {
+        color: green;
+    }
+
+    label {
+        display: inline-block;
+        width: 120px;
+    }
+
+    .grey {
+        color: grey;
+    }
+</style>

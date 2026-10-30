@@ -1,0 +1,45 @@
+<h3 align="center">Работа с Заказами (БД)</h3>
+
+<div class="row"><button onclick="orderAction()">Запрос в БД</button></div>
+
+<div id="responceStatus" class="row center"></div>
+<div id="answerDb" class="row center goodAnswer"></div>
+<div id="errorDb" class="row center errorAnswer"></div>
+
+
+<script>
+    var divResponceStatus
+    var divDbStatus
+    var divAnswerDb
+    var divErrorDb
+
+    var token
+
+
+    function orderAction() {
+        if (divAnswerDb) { divAnswerDb.innerHTML = "" }
+
+        fetch('/api/orders', {})
+            .then((res) => {
+                console.log(res)
+                if (divResponceStatus) { divResponceStatus.innerHTML = res.status }
+                return res.json();
+            })
+            .then((data) => {
+                if (divAnswerDb && data) { divAnswerDb.innerHTML = JSON.stringify(data) }
+                // if (divErrorDb && data.error) { divErrorDb.innerHTML = JSON.stringify(data.error) }
+            })
+            .catch((err) => {
+                console.error('Запрос не выполнен:', err);
+                if (divAnswerDb) { divAnswerDb.innerHTML = "<span class='error'>" + err + "</span>" }
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        divResponceStatus = document.getElementById("responceStatus")
+        divAnswerDb = document.getElementById("answerDb")
+        divErrorDb = document.getElementById("errorDb")
+    });
+
+
+</script>

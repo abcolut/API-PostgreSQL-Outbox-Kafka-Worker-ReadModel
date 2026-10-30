@@ -1,0 +1,58 @@
+<h3 align="center">Работа с Заказами (БД)</h3>
+
+<div id="answer" class="row ">
+    Работа с таблицей заказов
+    <ul>
+        <li><a href="/order_list">Список заказов </a></li>
+        <li><a href="/order_new">Новый заказ</a></li>
+        <li><a href="/order_change">Изменение заказа </a></li>
+
+    </ul>
+</div>
+
+
+<div class="row"><button onclick="orderAction()">Запрос в БД</button></div>
+
+<div id="responceStatus" class="row center"></div>
+<div id="answerDb" class="row center goodAnswer"></div>
+<div id="errorDb" class="row center errorAnswer"></div>
+
+
+
+<script>
+</script>
+
+<style>
+    input,
+    button {
+        margin: 3px;
+        padding: 3px;
+        border-radius: 5px;
+    }
+
+    .row {
+        margin: 10px;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    .errorAnswer {
+        color: brown;
+    }
+
+    .goodAnswer {
+        color: green;
+    }
+
+    label {
+        display: inline-block;
+        width: 80px;
+    }
+
+    .token {
+        font-size: xx-small;
+        color: grey;
+    }
+</style>
