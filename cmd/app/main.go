@@ -10,19 +10,19 @@ import (
 	"syscall"
 	"time"
 
-	_ "github.com/lib/pq"
-	"github.com/redis/go-redis/v9"
-
-	"github.com/joho/godotenv"
 	"my-go-service/internal/cache"
 	"my-go-service/internal/config"
 	"my-go-service/internal/events"
 	"my-go-service/internal/handlers"
+	"my-go-service/internal/ratelimit"
 	"my-go-service/internal/repository/postgres"
 	"my-go-service/internal/service"
-	httptransport "my-go-service/internal/transport/http"
 
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/redis/go-redis/v9"
+	httptransport "my-go-service/internal/transport/http"
 )
 
 func main() {
@@ -73,6 +73,10 @@ func main() {
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
 	})
+
+	mux.HandleFunc("/api/rate-limit-test", handlers.RateLimitApiHandler)
+	mux.HandleFunc("/rate-limit-test", handlers.RateLimitHtmlHandler)
+
 	mux.HandleFunc("/api/orders", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
@@ -101,7 +105,15 @@ func main() {
 	http.HandleFunc("/favicon.ico", handlers.FaviconHandler)
 	mux.HandleFunc("/", handlers.IndexHandler)
 
-	srv := &http.Server{Addr: ":8080", Handler: mux}
+	// 1 запросов в секунду, всплеск до 2
+	tb := ratelimit.NewTokenBucket(5, 10)
+	handlerWithLimits := ratelimit.RateLimitMiddleware(tb)(mux)
+
+	srv := &http.Server{
+		Addr: ":8080",
+		// Handler: mux,
+		Handler: handlerWithLimits, // используем обёрнутый хендлер
+	}
 	go func() {
 		log.Println("Server starting on :8080")
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
