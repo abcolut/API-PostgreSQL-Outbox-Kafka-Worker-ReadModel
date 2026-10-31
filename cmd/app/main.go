@@ -105,6 +105,8 @@ func main() {
 	http.HandleFunc("/favicon.ico", handlers.FaviconHandler)
 	mux.HandleFunc("/", handlers.IndexHandler)
 
+	mux.HandleFunc("/api/service_status", handlers.ServiceStausApilHandler)
+
 	// 1 запросов в секунду, всплеск до 2
 	tb := ratelimit.NewTokenBucket(5, 10)
 	handlerWithLimits := ratelimit.RateLimitMiddleware(tb)(mux)

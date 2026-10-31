@@ -16,6 +16,7 @@ func RateLimitHtmlHandler(w http.ResponseWriter, r *http.Request) {
 <html>
 <body>
   <h1>Тест Token Bucket</h1>
+  <p><a href="/">index</a> 
   <p>Нажми кнопку 10+ раз подряд — увидишь 429.</p>
   <button id="btn">Нажать 10 раз быстро</button>
 
